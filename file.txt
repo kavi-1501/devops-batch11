@@ -1,0 +1,176 @@
+
+hello every one 
+good day
+
+welcome to batch 11
+adred
+
+how to search a pattern
+have a nice day
+How to create file in vi editor?
+
+Syntax: vi <file-name>
+
+Note:
+1. If the file name already exist then it will open the file.
+2. If the file dosen't exist then it will create a file and open it
+3. There is no restriction for extension
+
+.........................
+
+Vi Editor modes:
+
+1. Command mode: By default when you open the file,it will be in command mode
+
+2)Insert: It will allow you to add/type the content to a file
+
+How to switch from command mode to insert mode:
+
+esc i (i= insert)
+
+...........................
+How to save and come out of file
+
+esc: wq
+
+w=write/save q=quit
+
+How to come out of vi editor without saving the content?
+
+esc: q!
+
+...................................
+
+How to move to end of the line where the cursor is pointing?
+
+esc A or (sec---shift---a)
+
+....................
+
+How to move to the last line ?
+
+esc G  or (esc-shift g)
+
+......................
+
+How to move to first line of a file?
+
+esc 1 G 0r (esc--1---shift--g)
+
+.......................
+
+How to move to 3rd line of a file?
+
+esc 3 G
+
+.......
+
+How to set the line numbers in Vi editor?
+
+esc:set nu and then press enter
+
+nu-number
+
+...........................
+
+How to remove the line numbers in Vi editor?
+
+esc:set nonu and then press enter
+
+nonu-nonumber
+
+...........................
+
+How to delete the lines where the cursor is pointing?
+
+esc dd
+
+How to delete the n number of lines from where the cursor is pointing
+
+esc ndd
+
+Ex:How to delete 4 lines from where the cursor is pointing
+
+esc 4dd
+
+......................
+
+How to search a pattern from the first position in opened file
+
+esc/pattern
+
+After esc/pattern press enter and then esc n
+and then simply click on n to search the next pattern
+
+......................
+
+How to search a pattern in a backward direction?
+
+esc?pattern
+
+after that press esc n
+
+.....................
+
+How to search and replace 1st matching string from where the cursor is pointing
+
+esc:s/search_pattern/Reurn_pattern
+
+s-search
+
+................
+
+How to search and replace all the patterns in a line where the cursor is pointing
+
+esc:s/search_pattern/Reurn_pattern/g
+
+g=globally
+
+..............................
+
+ How to search and replace the pattern only on nth line?
+ esc:ns/search_pattern/Reurn_pattern
+ 
+ Ex:How to search and replace the pattern only on 5th line?
+ esc:5s/search_pattern/Return_pattern
+ 
+ ..........................
+ 
+  How to search and replace all the pattern only on nth line?
+ esc:ns/search_pattern/Reurn_pattern/g
+ 
+ Ex:How to search and replace all the pattern only on 5th line?
+ esc:5s/search_pattern/Return_pattern/g
+ 
+ .................................
+ 
+ How to search and replace the pattern from 3rd line to 15th line all the occurances
+
+esc:3,15s/search_pattern/Return_pattern/g
+
+...................................
+
+How to search and replace only the first occurance from 3rd line to 15th 
+
+esc:3,15s/search_pattern/Return_pattern/
+
+.........................
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+line 2 from feature branch
