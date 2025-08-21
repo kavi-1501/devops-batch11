@@ -2,25 +2,17 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven3'  // Make sure 'Maven3' is defined in Jenkins Global Tool Configuration
+        maven 'Maven3'   // Make sure "Maven3" is configured in Jenkins Global Tools
     }
 
     environment {
-        SONAR_TOKEN = credentials('sonarqube-k') // SonarQube token stored in Jenkins
+        SONAR_TOKEN = credentials('sonarqube-k')   // Jenkins credential for SonarQube token
     }
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                // Checkout the Git repository
-                git url: 'https://github.com/kavi-1501/devops-batch11.git', branch: 'main'
-            }
-        }
-
         stage('Build WAR with Maven') {
             steps {
-                // Navigate to Maven project directory
                 dir('Amazon/Amazon-Core') {
                     sh 'mvn clean package'
                 }
@@ -30,8 +22,13 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 dir('Amazon/Amazon-Core') {
-                    withSonarQubeEnv('sonarqube') { // 'sonarqube' must match your Jenkins SonarQube server name
-                        sh 'mvn sonar:sonar -Dsonar.projectKey=devops_git'
+                    withSonarQubeEnv('sonarqube') {   // "sonarqube" must match Jenkins SonarQube server config name
+                        sh '''
+                            mvn sonar:sonar \
+                            -Dsonar.projectKey=devops_git \
+                            -Dsonar.host.url=http://localhost:9000 \
+                            -Dsonar.login=$SONAR_TOKEN
+                        '''
                     }
                 }
             }
@@ -40,14 +37,12 @@ pipeline {
         stage('Check Quality Gate') {
             steps {
                 script {
-                    // Wait a few seconds if needed for SonarQube to finish analysis
-                    sleep 5
+                    sleep(time: 10, unit: 'SECONDS')   // give Sonar a few seconds to process
                     def response = sh(
                         script: """curl -s -u $SONAR_TOKEN: "http://localhost:9000/api/qualitygates/project_status?projectKey=devops_git" """,
                         returnStdout: true
                     ).trim()
                     echo "SonarQube Response: ${response}"
-
                     if (!response.contains('"status":"OK"')) {
                         error "❌ Quality Gate failed!"
                     } else {
@@ -65,13 +60,5 @@ pipeline {
             }
         }
     }
-
-    post {
-        success {
-            echo "🎉 Pipeline completed successfully!"
-        }
-        failure {
-            echo "❌ Pipeline failed!"
-        }
-    }
 }
+
