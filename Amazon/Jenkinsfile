@@ -2,17 +2,25 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven3'
+        maven 'Maven3'  // Make sure 'Maven3' is defined in Jenkins Global Tool Configuration
     }
 
     environment {
-        SONAR_TOKEN = credentials('sonarqube-k')
+        SONAR_TOKEN = credentials('sonarqube-k') // SonarQube token stored in Jenkins
     }
 
     stages {
 
+        stage('Checkout') {
+            steps {
+                // Checkout the Git repository
+                git url: 'https://github.com/kavi-1501/devops-batch11.git', branch: 'main'
+            }
+        }
+
         stage('Build WAR with Maven') {
             steps {
+                // Navigate to Maven project directory
                 dir('Amazon/Amazon-Core') {
                     sh 'mvn clean package'
                 }
@@ -22,7 +30,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 dir('Amazon/Amazon-Core') {
-                    withSonarQubeEnv('sonarqube') {
+                    withSonarQubeEnv('sonarqube') { // 'sonarqube' must match your Jenkins SonarQube server name
                         sh 'mvn sonar:sonar -Dsonar.projectKey=devops_git'
                     }
                 }
@@ -32,11 +40,14 @@ pipeline {
         stage('Check Quality Gate') {
             steps {
                 script {
+                    // Wait a few seconds if needed for SonarQube to finish analysis
+                    sleep 5
                     def response = sh(
                         script: """curl -s -u $SONAR_TOKEN: "http://localhost:9000/api/qualitygates/project_status?projectKey=devops_git" """,
                         returnStdout: true
                     ).trim()
                     echo "SonarQube Response: ${response}"
+
                     if (!response.contains('"status":"OK"')) {
                         error "❌ Quality Gate failed!"
                     } else {
@@ -52,6 +63,15 @@ pipeline {
                     sh 'ansible-playbook -i inventory.ini playbook.yml'
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            echo "🎉 Pipeline completed successfully!"
+        }
+        failure {
+            echo "❌ Pipeline failed!"
         }
     }
 }
