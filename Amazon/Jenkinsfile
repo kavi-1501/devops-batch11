@@ -12,7 +12,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/kavi-1501/Ansi_sonar_jenkin.git', branch: 'main'
+                git url: 'https://github.com/kavi-1501/devops-batch11.git', branch: 'main'
             }
         }
 
