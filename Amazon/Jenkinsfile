@@ -18,14 +18,18 @@ pipeline {
 
         stage('Build WAR with Maven') {
             steps {
-                sh 'mvn clean package'
+                dir('Amazon/Amazon-Core') {
+                    sh 'mvn clean package'
+                }
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh 'mvn sonar:sonar -Dsonar.projectKey=devops_git'
+                dir('Amazon/Amazon-Core') {
+                    withSonarQubeEnv('sonarqube') {
+                        sh 'mvn sonar:sonar -Dsonar.projectKey=devops_git'
+                    }
                 }
             }
         }
@@ -37,9 +41,7 @@ pipeline {
                         script: """curl -s -u $SONAR_TOKEN: "http://localhost:9000/api/qualitygates/project_status?projectKey=devops_git" """,
                         returnStdout: true
                     ).trim()
-                    
                     echo "SonarQube Response: ${response}"
-                    
                     if (!response.contains('"status":"OK"')) {
                         error "❌ Quality Gate failed!"
                     } else {
@@ -51,11 +53,10 @@ pipeline {
 
         stage('Deploy with Ansible') {
             steps {
-                dir('ansible') {
+                dir('Amazon/ansible') {
                     sh 'ansible-playbook -i inventory.ini playbook.yml'
                 }
             }
         }
     }
 }
-
