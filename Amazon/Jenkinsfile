@@ -1,0 +1,61 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven3'
+    }
+
+    environment {
+        SONAR_TOKEN = credentials('sonarqube-k')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/kavi-1501/Ansi_sonar_jenkin.git', branch: 'main'
+            }
+        }
+
+        stage('Build WAR with Maven') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh 'mvn sonar:sonar -Dsonar.projectKey=devops_git'
+                }
+            }
+        }
+
+        stage('Check Quality Gate') {
+            steps {
+                script {
+                    def response = sh(
+                        script: """curl -s -u $SONAR_TOKEN: "http://localhost:9000/api/qualitygates/project_status?projectKey=devops_git" """,
+                        returnStdout: true
+                    ).trim()
+                    
+                    echo "SonarQube Response: ${response}"
+                    
+                    if (!response.contains('"status":"OK"')) {
+                        error "❌ Quality Gate failed!"
+                    } else {
+                        echo "✅ Quality Gate passed!"
+                    }
+                }
+            }
+        }
+
+        stage('Deploy with Ansible') {
+            steps {
+                dir('ansible') {
+                    sh 'ansible-playbook -i inventory.ini playbook.yml'
+                }
+            }
+        }
+    }
+}
+

@@ -1,0 +1,23 @@
+# Maven build output
+target/
+*/target/
+
+# Tomcat directories (runtime, logs, temp, configs)
+tomcat/apache-tomcat-*/logs/
+tomcat/apache-tomcat-*/temp/
+tomcat/apache-tomcat-*/work/
+tomcat/apache-tomcat-*/conf/
+tomcat/apache-tomcat-*/lib/
+
+# System files
+*.log
+*.class
+*.DS_Store
+*.swp
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+tomcat/
